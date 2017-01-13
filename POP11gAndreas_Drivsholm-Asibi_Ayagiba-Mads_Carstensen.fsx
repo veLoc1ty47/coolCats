@@ -85,6 +85,7 @@ let paintFunction() =
     counter <- counter + 1
     win.Invalidate()
     printfn "Point 1: %A. Point 2 : %A." point1 point2
+
 for j = 1 to 50 do
     paintFunction()
     

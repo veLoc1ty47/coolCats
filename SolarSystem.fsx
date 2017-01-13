@@ -1,7 +1,7 @@
 open System
 open System.Windows.Forms
 open System.Drawing
-open Graph
+(*open Graph*)
 
 let fst3 = function
     | (a,_,_) -> a
@@ -36,7 +36,7 @@ let SphericalToCartesian pos =
 
 let SizeVector v =
     let a = Math.Sqrt((fst3 v) ** 2.0 + (snd3 v) ** 2.0 + (trd3 v) ** 2.0)
-    a
+    a**3.0
 
 let Acceleration r =
     let GMSolen = 2.959122082322128 * (10.0 ** -4.0)
@@ -74,7 +74,7 @@ let makeCoords n windowSize =
     |> List.map (fun (elem : PlanetDay) -> elem.r)
     |> List.map (fun elem -> (fst3 elem, snd3 elem))
     |> List.map (fun elem -> (fst elem * 10.0, snd elem * 10.0))
-    |> List.map (fun elem -> Add2DVectors center elem)
+//    |> List.map (fun elem -> Add2DVectors center elem)
 
 type Planet(t0SP : float * float * float,
             t1SP : float * float * float, days : int, deltaT : float,
@@ -100,6 +100,8 @@ let t0SPEarth = (99.7590,-0.0020,0.983313645229)
 let t1SPEarth = (100.7782,-0.0020,0.983306196628)
 let earth = new Planet(t0SPEarth, t1SPEarth, days, deltaT, windowSize,
                 Color.Blue)
+for elm in earth.Coords do
+    printfn "%A" elm
 
 let t0SPJupiter = (162.9198, 1.1555, 5.415869377566)
 let t1SPJupiter = (162.9964, 1.1563, 5.416060985675)
@@ -116,7 +118,7 @@ let planets : Planet list = [earth; jupiter; mars]
 
 (* Drawing of Solar System *)
 (******************************************************************************)
-let drawPlanet (planet : Planet) time size (e : PaintEventArgs) =
+(*let drawPlanet (planet : Planet) time size (e : PaintEventArgs) =
     // uL: upLeft, uR: upRight, dL: downLeft, dR: downRight
     let x = int (round (fst planet.Coords.[time]))
     let y = int (round (snd planet.Coords.[time]))
@@ -135,5 +137,5 @@ let createForm backgroundColor (width, height) title (* draw *) =
 
 let brush = new SolidBrush(Color.Yellow)
 let win = createForm Color.White windowSize "Solar System" (drawPlanet)
-Application.Run win
+Application.Run win*)
 (******************************************************************************)
