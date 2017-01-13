@@ -96,8 +96,8 @@ let windowSize = (600, 600)
 
 (*** Oprettelse af alle planeter og deres positioner de næste *days* dage ****)
 (*****************************************************************************)
-let t0SPEarth = (99.7590,-0.0020,0.983313645229)
-let t1SPEarth = (100.7782,-0.0020,0.983306196628)
+let t0SPEarth = (88.2911,-0.0022,0.983811175790)
+let t1SPEarth = (89.3093,-0.0022,0.983747567681)
 let earth = new Planet(t0SPEarth, t1SPEarth, days, deltaT, windowSize,
                 Color.Blue)
 
@@ -116,9 +116,19 @@ let loadFile (fileName : string) =
         k <- char(openFile.Read ())
     for i = 0 to 4 do
         k <- char(openFile.Read ())
+    
+    let mutable skipForward = (openFile.ReadLine ()).Split ([|' '|], System.StringSplitOptions.RemoveEmptyEntries)
+    while (skipForward.[0] : string) <> "2457742.500000000" do
+        skipForward <- (openFile.ReadLine ()).Split ([|' '|], System.StringSplitOptions.RemoveEmptyEntries)
+        printfn "SkipFoward = %A" skipForward
+
+    match skipForward with
+        | [|a; b; c; d; e|] -> nasacoords <- nasacoords @ [calcR (float(d), float(b), float(c))]
+        | _ -> ()
 
     while char(openFile.Peek()) <> '$' do
         let mutable p = (openFile.ReadLine ()).Split ([|' '|], System.StringSplitOptions.RemoveEmptyEntries)
+        printfn "Rigtige = %A" p
         match p with
         | [|a; b; c; d; e|] -> nasacoords <- nasacoords @ [calcR (float(d), float(b), float(c))]
         | _ -> ()
@@ -130,12 +140,17 @@ let displayData planet n =
         match our, nasa with
         | (a, b), (c, d) -> (sqrt((c-a)**2.0 + (d-b)**2.0)) 
 
+    let mutable monthsCounter = 0 
+
     printfn "\t\t\tShowing calculations for %A" planet
     printfn "----------------------------------------------------------------------------------"
     printfn "  \tOurs \t\t\t\t Nasa \t\t\t\t Diff"
     for l = 0 to n do
-        match earth.Coords.[l], nasacoords.[l] with
-            | (a, b), (c, d) -> printfn "%i. \t(%.5f, %.5f) \t\t(%.5f, %.5f) \t\t %.5f" (l+1) a b c d (diff earth.Coords.[l] nasacoords.[l])
+        if l % 31 = 0 then
+            match earth.Coords.[l], nasacoords.[monthsCounter] with
+                | (a, b), (c, d) -> printfn "%i. \t(%.5f, %.5f) \t\t(%.5f, %.5f) \t\t %.5f" (l+1) a b c d (diff earth.Coords.[l] nasacoords.[monthsCounter])
+            monthsCounter <- monthsCounter + 1
+        else ()
 
 loadFile ("Earth.txt")
 displayData "Earth" 364

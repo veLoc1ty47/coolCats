@@ -1,16 +1,17 @@
+// Beregner r
+let convert (radius: float, long: float, lat: float) =
+    let toRad n =
+        (n*System.Math.PI)/180.0
+
+    ((radius) * sin(toRad (lat+90.0))*cos(toRad long), (radius) * sin(toRad (lat+90.0))*sin(toRad long))
+
 type Planet() = class
     let deltaT = 1.0
     let mutable veloVector = (0.0, 0.0)
 
-    // Beregner r
-    let calcR (radius: float, long: float, lat: float) =
-        let toRad n =
-            (n*System.Math.PI)/180.0
-
-        ((radius) * sin(toRad (lat+90.0))*cos(toRad long), (radius) * sin(toRad (lat+90.0))*sin(toRad long))
 
     // Array der indeholder alle udregnte positioner for given planet
-    let locationArray = Array.init 365 (fun x -> (calcR (0.98329, 100.6001, 0.0044)))
+    let locationArray = Array.init 365 (fun x -> (convert (0.98329, 100.6001, 0.0044)))
 
     let GMSolen = 2.959122082322128*(10.0**(-4.0))
     
@@ -29,7 +30,7 @@ type Planet() = class
     
     // Beregner r_0
     member x.veloHelp (point1 : float * float * float) (point2 : float * float * float) =
-        match (calcR point1), (calcR point2) with
+        match (convert point1), (convert point2) with
         | (a, b), (c, d) -> veloVector <- (c-a, d-b) 
 
     // Beregner alle r 
@@ -50,5 +51,50 @@ let bob = new Planet()
 bob.veloHelp (0.98329, 100.6001, 0.0044) (0.98328, 101.6192, 0.0044)
 bob.position 364
 
-for elm in bob.pArray do
-    printfn "%A" elm
+let mutable nasacoords = []
+
+let loadFile (fileName : string) =
+    let openFile = System.IO.File.OpenText fileName
+    let mutable k = 'b'
+    while k <> '$' do
+        k <- char(openFile.Read ())
+    for i = 0 to 4 do
+        k <- char(openFile.Read ())
+    
+    let mutable skipForward = (openFile.ReadLine ()).Split ([|' '|], System.StringSplitOptions.RemoveEmptyEntries)
+    while (skipForward.[0] : string) <> "2457742.500000000" do
+        skipForward <- (openFile.ReadLine ()).Split ([|' '|], System.StringSplitOptions.RemoveEmptyEntries)
+        printfn "SkipFoward = %A" skipForward
+
+    match skipForward with
+        | [|a; b; c; d; e|] -> nasacoords <- nasacoords @ [convert (float(d), float(b), float(c))]
+        | _ -> ()
+
+    while char(openFile.Peek()) <> '$' do
+        let mutable p = (openFile.ReadLine ()).Split ([|' '|], System.StringSplitOptions.RemoveEmptyEntries)
+        printfn "Rigtige = %A" p
+        match p with
+        | [|a; b; c; d; e|] -> nasacoords <- nasacoords @ [convert (float(d), float(b), float(c))]
+        | _ -> ()
+
+    openFile.Close()
+
+let displayData planet n =
+    let diff our nasa =
+        match our, nasa with
+        | (a, b), (c, d) -> (sqrt((c-a)**2.0 + (d-b)**2.0)) 
+
+    let mutable monthsCounter = 0 
+
+    printfn "\t\t\tShowing calculations for %A" planet
+    printfn "----------------------------------------------------------------------------------"
+    printfn "  \tOurs \t\t\t\t Nasa \t\t\t\t Diff"
+    for l = 0 to n do
+        if l % 31 = 0 then
+            match bob.pArray.[l], nasacoords.[monthsCounter] with
+                | (a, b), (c, d) -> printfn "%i. \t(%.5f, %.5f) \t\t(%.5f, %.5f) \t\t %.5f" (l+1) a b c d (diff bob.pArray.[l] nasacoords.[monthsCounter])
+            monthsCounter <- monthsCounter + 1
+        else ()
+
+loadFile ("Earth.txt")
+displayData "Earth" 364
