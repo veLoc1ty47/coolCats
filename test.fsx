@@ -11,7 +11,7 @@ type Planet() = class
 
 
     // Array der indeholder alle udregnte positioner for given planet
-    let locationArray = Array.init 365 (fun x -> (convert (0.98329, 100.6001, 0.0044)))
+    let locationArray = Array.init 365 (fun x -> (convert (0.983811175790, 88.2911, -0.0022)))
 
     let GMSolen = 2.959122082322128*(10.0**(-4.0))
     
@@ -48,7 +48,7 @@ end
 
 let bob = new Planet()
 
-bob.veloHelp (0.98329, 100.6001, 0.0044) (0.98328, 101.6192, 0.0044)
+bob.veloHelp (0.983811175790, 88.2911, -0.0022) (0.983747567681, 89.3093, -0.0022)
 bob.position 364
 
 let mutable nasacoords = []

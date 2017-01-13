@@ -73,7 +73,7 @@ let makeCoords n windowSize =
     n
     |> List.map (fun (elem : PlanetDay) -> elem.r)
     |> List.map (fun elem -> (fst3 elem, snd3 elem))
-    |> List.map (fun elem -> (fst elem * 10.0, snd elem * 10.0))
+//    |> List.map (fun elem -> (fst elem * 10.0, snd elem * 10.0))
 //    |> List.map (fun elem -> Add2DVectors center elem)
 
 type Planet(t0SP : float * float * float,
