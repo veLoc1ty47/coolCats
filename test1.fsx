@@ -108,19 +108,16 @@ let jupiter = new Planet(t0SPJupiter, t0SPJupiter, days, deltaT, windowSize,
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-type calculatePlanets (planet : Planet) =
-    let mutable nasacoords = []
-    
+type calculatePlanets() =
     let calcR (radius: float, long: float, lat: float) =
         let toRad n =
             (n*System.Math.PI)/180.0
 
         ((radius) * sin(toRad (lat+90.0))*cos(toRad long), (radius) * sin(toRad (lat+90.0))*sin(toRad long))
 
-    member x.showCalculated = nasacoords
-
-    member x.loadFile (fileName : string) =
-        let openFile = System.IO.File.OpenText fileName
+    member x.displayData (planet : Planet) n planetName =
+        let mutable nasacoords  = [] 
+        let openFile = System.IO.File.OpenText (planetName+".txt")
         let mutable k = 'b'
         while k <> '$' do
             k <- char(openFile.Read ())
@@ -145,7 +142,6 @@ type calculatePlanets (planet : Planet) =
 
         openFile.Close()
 
-    member x.displayData n planetName =
         let diff our nasa =
             match our, nasa with
             | (a, b), (c, d) -> (sqrt((c-a)**2.0 + (d-b)**2.0)) 
@@ -164,10 +160,6 @@ type calculatePlanets (planet : Planet) =
         printfn "----------------------------------------------------------------------------------"
 
 
-let earthCalculate = new calculatePlanets (earth)
-earthCalculate.loadFile ("Earth.txt")
-earthCalculate.displayData 364 "Earth"
-
-let jupiterCalculate = new calculatePlanets (jupiter)
-jupiterCalculate.loadFile ("Jupiter.txt")
-jupiterCalculate.displayData 364 "Jupiter"
+let calculateDiff = new calculatePlanets()
+calculateDiff.displayData earth 364 "Earth"
+calculateDiff.displayData jupiter 364 "Jupiter"
