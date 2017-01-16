@@ -194,7 +194,6 @@ type calculatePlanets() =
         let mutable skipForward = (openFile.ReadLine ()).Split ([|' '|], System.StringSplitOptions.RemoveEmptyEntries)
         while (skipForward.[0] : string) <> "2457742.500000000" do
             skipForward <- (openFile.ReadLine ()).Split ([|' '|], System.StringSplitOptions.RemoveEmptyEntries)
-            //printfn "SkipFoward = %A" skipForward
 
         match skipForward with
             | [|a; b; c; d; e|] -> nasacoords <- nasacoords @ [calcR (float(d), float(b), float(c))]
@@ -202,7 +201,6 @@ type calculatePlanets() =
 
         while char(openFile.Peek()) <> '$' do
             let mutable p = (openFile.ReadLine ()).Split ([|' '|], System.StringSplitOptions.RemoveEmptyEntries)
-            //printfn "Rigtige = %A" p
             match p with
             | [|a; b; c; d; e|] -> nasacoords <- nasacoords @ [calcR (float(d), float(b), float(c))]
             | _ -> ()
@@ -228,8 +226,6 @@ type calculatePlanets() =
 
 let diff = new calculatePlanets()
 
-for planet in planets do
-    diff.displayData planet 364 planet.Name
 
 (******************************************************************************)
 
@@ -258,18 +254,53 @@ let updatePlanet (form : Form) (time : int byref) (timer : Timer) showTime =
     time <- time + 1
     form.Refresh()
 
-let win = new Form()
-win.BackColor <- Color.White
-win.Size <- Size(fst windowSize, snd windowSize)
-win.Text <- "Solar system"
-for planet in planets do
-    win.Paint.Add (drawPlanet planet &time)
-win.Paint.Add (drawPlanet sun &time)
+let animateIt() =
+    let win = new Form()
+    win.BackColor <- Color.White
+    win.Size <- Size(fst windowSize, snd windowSize)
+    win.Text <- "Solar system"
+    for planet in planets do
+        win.Paint.Add (drawPlanet planet &time)
+    win.Paint.Add (drawPlanet sun &time)
 
-let mutable timer = new Timer()
-timer.Interval <- 10
-timer.Enabled <- true
-timer.Tick.Add (updatePlanet win &time timer)
+    let mutable timer = new Timer()
+    timer.Interval <- 10
+    timer.Enabled <- true
+    timer.Tick.Add (updatePlanet win &time timer)
+    Application.Run win
 
-Application.Run win
+let showIt() =
+    for planet in planets do
+        diff.displayData planet 364 planet.Name
+    printfn "Press ENTER to restart..."
+    System.Console.ReadLine () |> ignore
+
+
 (******************************************************************************)
+
+let playIt() =
+    System.Console.Clear()
+    printfn """
+    ________                 __       _________                           ___________              .__                              
+    \______ \ _____    ____ |  | __  /   _____/__________    ____  ____   \_   _____/__  _________ |  |   ___________   ___________ 
+     |    |  \\__  \  /    \|  |/ /  \_____  \\____ \__  \ _/ ___\/ __ \   |    __)_\  \/  /\____ \|  |  /  _ \_  __ \_/ __ \_  __ \
+     |____|   \/ __ \|   |  \    <   /        \  |_> > __ \\  \__\  ___/   |        \>    < |  |_> >  |_(  <_> )  | \/\  ___/|  | \/
+    /_______  (____  /___|  /__|_ \ /_______  /   __(____  /\___  >___  > /_______  /__/\_ \|   __/|____/\____/|__|    \___  >__|   
+            \/     \/     \/     \/         \/|__|       \/     \/    \/          \/      \/|__|                           \/       
+    """
+    printfn "First you will see an animation of the movement of 9 planets."
+    printfn "Afterwards, you will be presented with data from our simulation,"
+    printfn "as well as NASA's data for the planets, and the difference between."
+
+    printfn "Press ENTER to continue..."
+    System.Console.ReadLine () |> ignore
+
+    animateIt()
+
+    printfn "Press ENTER to show data..."
+    System.Console.ReadLine () |> ignore
+    
+    showIt()
+    
+while true do
+    playIt()
