@@ -101,56 +101,73 @@ let t1SPEarth = (89.3093,-0.0022,0.983747567681)
 let earth = new Planet(t0SPEarth, t1SPEarth, days, deltaT, windowSize,
                 Color.Blue)
 
-let calcR (radius: float, long: float, lat: float) =
-    let toRad n =
-        (n*System.Math.PI)/180.0
+let t0SPJupiter = (189.7912,1.3036,5.455662231160)
+let t1SPJupiter = (189.8667,1.3036,5.455691259986)
+let jupiter = new Planet(t0SPJupiter, t0SPJupiter, days, deltaT, windowSize, 
+                  Color.White)
 
-    ((radius) * sin(toRad (lat+90.0))*cos(toRad long), (radius) * sin(toRad (lat+90.0))*sin(toRad long))
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
-let mutable nasacoords = []
-
-let loadFile (fileName : string) =
-    let openFile = System.IO.File.OpenText fileName
-    let mutable k = 'b'
-    while k <> '$' do
-        k <- char(openFile.Read ())
-    for i = 0 to 4 do
-        k <- char(openFile.Read ())
+type calculatePlanets (planet : Planet) =
+    let mutable nasacoords = []
     
-    let mutable skipForward = (openFile.ReadLine ()).Split ([|' '|], System.StringSplitOptions.RemoveEmptyEntries)
-    while (skipForward.[0] : string) <> "2457742.500000000" do
-        skipForward <- (openFile.ReadLine ()).Split ([|' '|], System.StringSplitOptions.RemoveEmptyEntries)
-        printfn "SkipFoward = %A" skipForward
+    let calcR (radius: float, long: float, lat: float) =
+        let toRad n =
+            (n*System.Math.PI)/180.0
 
-    match skipForward with
-        | [|a; b; c; d; e|] -> nasacoords <- nasacoords @ [calcR (float(d), float(b), float(c))]
-        | _ -> ()
+        ((radius) * sin(toRad (lat+90.0))*cos(toRad long), (radius) * sin(toRad (lat+90.0))*sin(toRad long))
 
-    while char(openFile.Peek()) <> '$' do
-        let mutable p = (openFile.ReadLine ()).Split ([|' '|], System.StringSplitOptions.RemoveEmptyEntries)
-        printfn "Rigtige = %A" p
-        match p with
-        | [|a; b; c; d; e|] -> nasacoords <- nasacoords @ [calcR (float(d), float(b), float(c))]
-        | _ -> ()
+    member x.showCalculated = nasacoords
 
-    openFile.Close()
+    member x.loadFile (fileName : string) =
+        let openFile = System.IO.File.OpenText fileName
+        let mutable k = 'b'
+        while k <> '$' do
+            k <- char(openFile.Read ())
+        for i = 0 to 4 do
+            k <- char(openFile.Read ())
+        
+        let mutable skipForward = (openFile.ReadLine ()).Split ([|' '|], System.StringSplitOptions.RemoveEmptyEntries)
+        while (skipForward.[0] : string) <> "2457742.500000000" do
+            skipForward <- (openFile.ReadLine ()).Split ([|' '|], System.StringSplitOptions.RemoveEmptyEntries)
+            //printfn "SkipFoward = %A" skipForward
 
-let displayData planet n =
-    let diff our nasa =
-        match our, nasa with
-        | (a, b), (c, d) -> (sqrt((c-a)**2.0 + (d-b)**2.0)) 
+        match skipForward with
+            | [|a; b; c; d; e|] -> nasacoords <- nasacoords @ [calcR (float(d), float(b), float(c))]
+            | _ -> ()
 
-    let mutable monthsCounter = 0 
+        while char(openFile.Peek()) <> '$' do
+            let mutable p = (openFile.ReadLine ()).Split ([|' '|], System.StringSplitOptions.RemoveEmptyEntries)
+            //printfn "Rigtige = %A" p
+            match p with
+            | [|a; b; c; d; e|] -> nasacoords <- nasacoords @ [calcR (float(d), float(b), float(c))]
+            | _ -> ()
 
-    printfn "\t\t\tShowing calculations for %A" planet
-    printfn "----------------------------------------------------------------------------------"
-    printfn "  \tOurs \t\t\t\t Nasa \t\t\t\t Diff"
-    for l = 0 to n do
-        if l % 31 = 0 then
-            match earth.Coords.[l], nasacoords.[monthsCounter] with
-                | (a, b), (c, d) -> printfn "%i. \t(%.5f, %.5f) \t\t(%.5f, %.5f) \t\t %.5f" (l+1) a b c d (diff earth.Coords.[l] nasacoords.[monthsCounter])
-            monthsCounter <- monthsCounter + 1
-        else ()
+        openFile.Close()
 
-loadFile ("Earth.txt")
-displayData "Earth" 364
+    member x.displayData n planetName =
+        let diff our nasa =
+            match our, nasa with
+            | (a, b), (c, d) -> (sqrt((c-a)**2.0 + (d-b)**2.0)) 
+
+        let mutable monthsCounter = 0 
+
+        printfn "\n\t\t\tShowing calculations for %A" planetName
+        printfn "----------------------------------------------------------------------------------"
+        printfn "  \tOurs \t\t\t\t Nasa \t\t\t\t Diff"
+        for l = 0 to n do
+            if l % 31 = 0 then
+                match planet.Coords.[l], nasacoords.[monthsCounter] with
+                    | (a, b), (c, d) -> printfn "%i. \t(%.5f, %.5f) \t\t(%.5f, %.5f) \t\t %.5f" (l+1) a b c d (diff planet.Coords.[l] nasacoords.[monthsCounter])
+                monthsCounter <- monthsCounter + 1
+            else ()
+        printfn "----------------------------------------------------------------------------------"
+
+
+let earthCalculate = new calculatePlanets (earth)
+earthCalculate.loadFile ("Earth.txt")
+earthCalculate.displayData 364 "Earth"
+
+let jupiterCalculate = new calculatePlanets (jupiter)
+jupiterCalculate.loadFile ("Jupiter.txt")
+jupiterCalculate.displayData 364 "Jupiter"
