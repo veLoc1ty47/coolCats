@@ -94,6 +94,7 @@ let TimePeriod days pS dT =
     TPHelper days pS dT
     |> List.rev
 
+// "Omsætter" koordinater, så de får centrum i midten af vinduet.
 let makeCoords n windowSize =
     let center =  (float (fst windowSize) / 2.0, float (snd windowSize) / 2.0)
     n
@@ -101,6 +102,15 @@ let makeCoords n windowSize =
     |> List.map (fun elem -> (fst3 elem, snd3 elem))
     |> List.map (fun elem -> (fst elem * 10.0, snd elem * 10.0))
     |> List.map (fun elem -> Add2DVectors center elem)
+
+/// <summary> Objektklassen Planet</summary>
+/// <param name="t0SP">start position i sfæriske koordinater</param>
+/// <param name="t1SP">næste position i sfæriske koordinater</param>
+/// <param name="days">Er hvor lang tid simuleringen skal køre</param>
+/// <param name="deltaT"> Er tidsskridtet</param>
+/// <param name="windowSize"> Er er hvor stort vinduet skal være</param>
+/// <param name="color"> Planetens farve</param>
+/// <param name="name"> Planetens navn</param>
 
 type Planet(t0SP : float * float * float,
             t1SP : float * float * float, days : int, deltaT : float,
@@ -122,21 +132,31 @@ type Planet(t0SP : float * float * float,
 
 (* Disse værdier kan ændres, og programmet vil køre derefter *)
 (******************************************************************************)
-// Kun antal dage hvis deltaT = 1.0.
+// Variabelnavnet 'days' kan være lidt misvisende, det det kun er antal dage
+// hvis deltaT = 1
 let mutable days = 400
-let deltaT = 0.5
+
+// Delta T er størrelsen på tidsskridt før næste position findes.
+// 1 = en dags tidsskridt.
+let deltaT = 1
 let windowSize = (750, 750)
 (******************************************************************************)
 
 
 (* Oprettelse af alle planeter og deres positioner de næste *days* dage *)
 (*****************************************************************************)
+
+// Jordens start position
 let t0SPEarth = (99.7590,-0.0020,0.983313645229)
+// Jordens position efter 1 dag.
 let t1SPEarth = (100.7782,-0.0020,0.983306196628)
+// Jordens farve.
 let colorEarth = Color.FromArgb(255, 0, 0, 255)
+// Definerer 'earth' som værende en instans af klassen Planet.
 let earth = new Planet(t0SPEarth, t1SPEarth, days, deltaT, windowSize,
                 colorEarth, "Earth")
 
+// Det samme som før.
 let t0SPJupiter = (162.9198, 1.1555, 5.415869377566)
 let t1SPJupiter = (162.9964, 1.1563, 5.416060985675)
 let colorJupiter = Color.FromArgb(255, 222, 184, 135)
@@ -192,6 +212,7 @@ let sun = new Planet(t0SPSun, t1SPSun, days, deltaT, windowSize,
                 colorSun, "Sun")
 
 
+// Liste indeholdende samtlige planet objekter.
 let planets : Planet list = [earth; jupiter; mars; mercury; neptune; pluto;
                              saturn; uranus; venus]
 (******************************************************************************)
@@ -200,6 +221,8 @@ let planets : Planet list = [earth; jupiter; mars; mercury; neptune; pluto;
 (* Difference NASAs data og vores projekteringer *)
 (******************************************************************************)
 
+// Klasse calculate Planets der finder forskel mellem vores simulering og NASAs
+// koordinater
 type calculatePlanets() =
     let calcR (radius: float, long: float, lat: float) =
         let toRad n =
@@ -262,6 +285,10 @@ for planet in planets do
 (******************************************************************************)
 let mutable time = 0
 
+/// <summary>Tegner planeterne i vinduet</summary>
+/// <param name="planet"> tilfælde af klassen planet</param>
+/// <param name="time"> Bruges til at lave koordinater</param>
+/// <param name="e"> Tegner et nyt tilfælde PaintEventArgs </param>
 let drawPlanet (planet : Planet) (time : int byref) (e : PaintEventArgs) = 
     let pairToPoint p =
         Point (int (round (fst p)), int (round (snd p)))
@@ -274,6 +301,7 @@ let drawPlanet (planet : Planet) (time : int byref) (e : PaintEventArgs) =
     let rect = Rectangle (pos.X, pos.Y, size.Width, size.Height)
     e.Graphics.FillEllipse(brush, rect)
 
+// Opdatere planeternes position i simuleringen
 let updatePlanet (form : Form) (time : int byref) (timer : Timer) showTime =
     if time = days - 20 then
         timer.Stop()
@@ -283,6 +311,7 @@ let updatePlanet (form : Form) (time : int byref) (timer : Timer) showTime =
     time <- time + 1
     form.Refresh()
 
+// Laver et nyt vindue og tegner planeterne 
 let win = new Form()
 win.BackColor <- Color.White
 win.Size <- Size(fst windowSize, snd windowSize)
@@ -291,10 +320,12 @@ for planet in planets do
     win.Paint.Add (drawPlanet planet &time)
 win.Paint.Add (drawPlanet sun &time)
 
+// Laver en ny timer
 let mutable timer = new Timer()
 timer.Interval <- 10
 timer.Enabled <- true
 timer.Tick.Add (updatePlanet win &time timer)
 
+// Eksekverer vores winforms applikation.
 Application.Run win
 (******************************************************************************)
