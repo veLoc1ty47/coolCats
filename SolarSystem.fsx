@@ -53,18 +53,29 @@ let SizeVector v =
     let a = Math.Sqrt((fst3 v) ** 2.0 + (snd3 v) ** 2.0 + (trd3 v) ** 2.0)
     a
 
+// Beregner accelerationsvektoren.
 let Acceleration r =
     let GMSolen = 2.959122082322128 * (10.0 ** -4.0)
     let frac = -((GMSolen) / ((SizeVector r) ** 3.0))
     let pos = r .* frac
     pos
 
+// Klasset PlanetDay tager 3 parametre af typen float * float * float.
+// Her kunne man tidligere bare have defineret en type:
+//     let type Vector = float * float * float.
+// Og så have parametre havde haft typen i stedet for float * float * float.
+// Det ville have været lidt bedre stil.
 type PlanetDay(r : float * float * float, v : float * float * float,
                a : float * float * float) =
     member val r = r
     member val v = v
     member val a = a
 
+/// <summary>Opretter en liste af PlanetDay's</summary>
+/// <param name="days">Er hvor lang listen skal være</param>
+/// <param name="pS">Er en PlanetDay</param>
+/// <param name="dT"> Er tidskridtet delta T</param>
+/// <returns>En liste af PlanetDay's</returns>
 let TimePeriod days pS dT =
     let rec TPHelper n pS dT =
         match n with
