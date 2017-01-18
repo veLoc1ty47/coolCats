@@ -123,6 +123,8 @@ type Planet(t0SP : float * float * float,
     let planetDay1 = new PlanetDay(t0CP, v0, Acceleration t0CP)
     let time : PlanetDay list = TimePeriod days planetDay1 deltaT
 
+    member this.Time
+        with get() = time
     member this.Coords = makeCoords time windowSize
     member this.Color = color
     member this.Name = name
@@ -220,6 +222,13 @@ let planets : Planet list = [earth; jupiter; mars; mercury; neptune; pluto;
 
 (* Difference NASAs data og vores projekteringer *)
 (******************************************************************************)
+let makeCoordsInverse n windowSize =
+    let center =  (float (fst windowSize) / 2.0, float (snd windowSize) / 2.0)
+    n
+    |> List.map (fun (elem : PlanetDay) -> elem.r)
+    |> List.map (fun elem -> (fst3 elem, snd3 elem))
+    // |> List.map (fun elem -> (fst elem / 10.0, snd elem / 10.0))
+    // |> List.map (fun elem -> Add2DVectors (-(fst center), -(snd center)) elem)
 
 // Klasse calculate Planets der finder forskel mellem vores simulering og NASAs
 // koordinater
@@ -280,9 +289,14 @@ type calculatePlanets() =
             if l % 31 = 0 then
                 match planet.Coords.[l], nasacoords.[monthsCounter] with
                     | (a, b), (c, d) ->
+                        let tempCoords = makeCoordsInverse planet.Time windowSize
+                        let (a, b) : float * float = tempCoords.[l]
+                        let realCoords : float * float = tempCoords.[l]
                         printf "%i. " (l+1)
                         printf "\t(%.5f, %.5f) \t\t(%.5f, %.5f)"  a b c d
-                        printfn "\t\t %.5f" (diff planet.Coords.[l] nasacoords.[monthsCounter])
+                        // Dette er voldsomt ueffektiv. Det er et lille patch
+                        // på afleveringsdagen.
+                        printfn "\t\t %.5f" (diff realCoords nasacoords.[monthsCounter])
                 monthsCounter <- monthsCounter + 1
             else ()
         printfn "----------------------------------------------------------------------------------"
