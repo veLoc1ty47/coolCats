@@ -4,24 +4,35 @@ open System.Drawing
 
 (* En masse funktioner som bliver brugt senere er defineret her *)
 (******************************************************************************)
+
+// Returnerer det første element i en triple (i dette tilfælde x-koordinatet
+// for en vektor i rummet).
 let fst3 = function
     | (a,_,_) -> a
 
+// Returnerer det første element i en triple (i dette tilfælde y-koordinatet
+// for en vektor i rummet).
 let snd3 = function
     | (_,b,_) -> b
 
+// Returnerer det første element i en triple (i dette tilfælde z-koordinatet
+// for en vektor i rummet).
 let trd3 = function
     | (_,_,c) -> c
 
+// Infix funktion som adderer to vektorer i rummet
 let (.+) v1 v2 =
     (fst3 v1 + fst3 v2, snd3 v1 + snd3 v2, trd3 v1 + trd3 v2)
 
+// prefix funktion som adderer to vektorer i planet
 let Add2DVectors v1 v2 =
     (fst v1 + fst v2, snd v1 + snd v2)
 
+// infix funktioner som subtraherer to vektorer i rummet.
 let (.-) v1 v2 =
     (fst3 v1 - fst3 v2, snd3 v1 - snd3 v2, trd3 v1 - trd3 v2)
 
+// infix funktioner som multiplicerer to vektorer i rummet.
 let (.*) v a =
     (a * fst3 v, a * snd3 v, a * trd3 v)
 
