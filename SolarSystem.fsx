@@ -36,8 +36,10 @@ let (.-) v1 v2 =
 let (.*) v a =
     (a * fst3 v, a * snd3 v, a * trd3 v)
 
+// Konventerer grader til radianer
 let DegToRad n = n * Math.PI / 180.0
 
+// Konverterer sfæriske koordinater til kartesian koordinater
 let SphericalToCartesian pos =
     let x = trd3 pos * Math.Sin (DegToRad(snd3 pos + 90.0)) *
             Math.Cos (DegToRad (fst3 pos))
@@ -46,13 +48,14 @@ let SphericalToCartesian pos =
     let z = trd3 pos * Math.Cos (DegToRad(snd3 pos + 90.0))
     (x,y,z)
 
+// Størrelsen af en vektor
 let SizeVector v =
     let a = Math.Sqrt((fst3 v) ** 2.0 + (snd3 v) ** 2.0 + (trd3 v) ** 2.0)
-    a ** 3.0 // a skal nok være opløftet i tredje, altså a ** 3.0
+    a
 
 let Acceleration r =
     let GMSolen = 2.959122082322128 * (10.0 ** -4.0)
-    let frac = -((GMSolen) / (SizeVector r))
+    let frac = -((GMSolen) / ((SizeVector r) ** 3.0))
     let pos = r .* frac
     pos
 
