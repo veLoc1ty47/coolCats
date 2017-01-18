@@ -228,7 +228,8 @@ type calculatePlanets() =
         let toRad n =
             (n*System.Math.PI)/180.0
 
-        ((radius) * sin(toRad (lat+90.0))*cos(toRad long), (radius) * sin(toRad (lat+90.0))*sin(toRad long))
+        ((radius) * sin(toRad (lat+90.0))*cos(toRad long),
+         (radius) * sin(toRad (lat+90.0))*sin(toRad long))
 
     member x.displayData (planet : Planet) n planetName =
         let mutable nasacoords  = [] 
@@ -239,20 +240,29 @@ type calculatePlanets() =
         for i = 0 to 4 do
             k <- char(openFile.Read ())
         
-        let mutable skipForward = (openFile.ReadLine ()).Split ([|' '|], System.StringSplitOptions.RemoveEmptyEntries)
+        let mutable skipForward = (openFile.ReadLine ()).Split ([|' '|],
+                                   System.StringSplitOptions.RemoveEmptyEntries)
+
         while (skipForward.[0] : string) <> "2457742.500000000" do
-            skipForward <- (openFile.ReadLine ()).Split ([|' '|], System.StringSplitOptions.RemoveEmptyEntries)
+            skipForward <- (openFile.ReadLine ()).Split ([|' '|],
+                            System.StringSplitOptions.RemoveEmptyEntries)
             //printfn "SkipFoward = %A" skipForward
 
         match skipForward with
-            | [|a; b; c; d; e|] -> nasacoords <- nasacoords @ [calcR (float(d), float(b), float(c))]
+            | [|a; b; c; d; e|] ->
+                let temp = calcR <| (float d, float b, float c)
+                nasacoords <- nasacoords @ [temp]
             | _ -> ()
 
         while char(openFile.Peek()) <> '$' do
-            let mutable p = (openFile.ReadLine ()).Split ([|' '|], System.StringSplitOptions.RemoveEmptyEntries)
+            let mutable p = (openFile.ReadLine ()).Split ([|' '|],
+                             System.StringSplitOptions.RemoveEmptyEntries)
+
             //printfn "Rigtige = %A" p
             match p with
-            | [|a; b; c; d; e|] -> nasacoords <- nasacoords @ [calcR (float(d), float(b), float(c))]
+            | [|a; b; c; d; e|] ->
+                let temp = calcR <| (float d, float b, float c)
+                nasacoords <- nasacoords @ [temp]
             | _ -> ()
 
         openFile.Close()
@@ -269,7 +279,10 @@ type calculatePlanets() =
         for l = 0 to n do
             if l % 31 = 0 then
                 match planet.Coords.[l], nasacoords.[monthsCounter] with
-                    | (a, b), (c, d) -> printfn "%i. \t(%.5f, %.5f) \t\t(%.5f, %.5f) \t\t %.5f" (l+1) a b c d (diff planet.Coords.[l] nasacoords.[monthsCounter])
+                    | (a, b), (c, d) ->
+                        printf "%i. " (l+1)
+                        printf "\t(%.5f, %.5f) \t\t(%.5f, %.5f)"  a b c d
+                        printfn "\t\t %.5f" (diff planet.Coords.[l] nasacoords.[monthsCounter])
                 monthsCounter <- monthsCounter + 1
             else ()
         printfn "----------------------------------------------------------------------------------"
