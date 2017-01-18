@@ -138,7 +138,7 @@ let mutable days = 400
 
 // Delta T er størrelsen på tidsskridt før næste position findes.
 // 1 = en dags tidsskridt.
-let deltaT = 1
+let deltaT = 1.0
 let windowSize = (750, 750)
 (******************************************************************************)
 
@@ -232,7 +232,7 @@ type calculatePlanets() =
 
     member x.displayData (planet : Planet) n planetName =
         let mutable nasacoords  = [] 
-        let openFile = System.IO.File.OpenText (planetName+".txt")
+        let openFile = System.IO.File.OpenText (@"data/"+planetName+".txt")
         let mutable k = 'b'
         while k <> '$' do
             k <- char(openFile.Read ())
