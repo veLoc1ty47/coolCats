@@ -1,4 +1,7 @@
 open System
+open System.Drawing
+
+
 
 let fst3 = function
     | (a,_,_) -> a
@@ -77,6 +80,31 @@ let makeCoords n windowSize =
     |> List.map (fun elem -> (fst elem * 10.0, snd elem * 10.0))
     |> List.map (fun elem -> Add2DVectors center elem)
 
+type Planet(t0SP : float * float * float,
+            t1SP : float * float * float, days : int, deltaT : float,
+            windowSize : int * int, color : Color, name : string) =
+
+    let t0CP = SphericalToCartesian t0SP 
+    let t1CP = SphericalToCartesian t1SP
+    let v0 = t1CP .- t0CP
+
+    let planetDay1 = new PlanetDay(t0CP, v0, Acceleration t0CP)
+    let time : PlanetDay list = TimePeriod days planetDay1 deltaT
+
+    member this.Time
+        with get() = time
+    member this.Coords = makeCoords time windowSize
+    member this.Color = color
+    member this.Name = name
+    static member Size = Size(10, 10)
+
+let makeCoordsInverse n windowSize =
+    let center =  (float (fst windowSize) / 2.0, float (snd windowSize) / 2.0)
+    n
+    |> List.map (fun (elem : PlanetDay) -> elem.r)
+    |> List.map (fun elem -> (fst3 elem, snd3 elem))
+    |> List.map (fun elem -> Add2DVectors (-(fst center), -(snd center)) elem)
+    |> List.map (fun elem -> (fst elem / 10.0, snd elem / 10.0))
 
 printfn "Test af fst3:"
 printfn "  1a. %b" (3 = fst3 (3, 4, 5))
