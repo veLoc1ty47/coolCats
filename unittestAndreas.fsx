@@ -1,8 +1,6 @@
 open System
 open System.Drawing
 
-
-
 let fst3 = function
     | (a,_,_) -> a
 
@@ -218,3 +216,40 @@ printfn ""
 // så stor præcision. Det er i hvertfald hvad jeg tror der er problemet. Man
 // kunne evt. lave en sammenligning funktion, hvor man som parameter for
 // funktionen havde en tolerance, f.eks. 0.002 %, eller noget lignende.
+
+printfn "Tests for makeCoords"
+let a = new PlanetDay((10.0, 10.0, 10.0), (10.0, 10.0, 10.0), (10.0, 10.0, 10.0))
+let b = new PlanetDay((20.0, 20.0, 20.0), (10.0, 10.0, 10.0), (10.0, 10.0, 10.0))
+let c = new PlanetDay((30.0, 30.0, 30.0), (10.0, 10.0, 10.0), (10.0, 10.0, 10.0))
+let ae = makeCoords [a; b; c] (750, 750)
+let be = makeCoords [a; b; c] (400, 400)
+let ce = makeCoords [a; b; c] (0, 0)
+printfn "---------------------------------------------------------------"
+printfn "Test 12a: %b" (ae = [(475.0, 475.0); (575.0, 575.0); (675.0, 675.0)])
+printfn "Test 12b: %b" (be = [(300.0, 300.0); (400.0, 400.0); (500.0, 500.0)])
+printfn "Test 12c: %b" (ce = [(100.0, 100.0); (200.0, 200.0); (300.0, 300.0)])
+
+// Vi tester om den omregner rigtigt når Days er sat til 1. At præcist kalkulere hvad outputtet vil
+// være med god float point nøjagtighed er totalt uoverskueligt over flere dage.
+printfn "\nTests for Planet"
+let bob = new Planet((100.0, 100.0, 100.0), (200.0, 200.0, 200.0), 1, 1.0, (750, 750), Color.FromArgb(255,0,0,255), "Bob")
+let xCoordCart = 100.0 * Math.Sin((100.0+90.0) * Math.PI / 180.0) * Math.Cos((100.0) * Math.PI / 180.0)
+let xCoordCenter = xCoordCart * 10.0 + 375.0 
+let yCoordCart = 100.0 * Math.Sin((100.0+90.0) * Math.PI / 180.0) * Math.Sin((100.0) * Math.PI / 180.0)
+let yCoordCenter = yCoordCart * 10.0 + 375.0
+printfn "---------------------------------------------------------------"
+printfn "Test 13a: %b" (bob.Coords = [(xCoordCenter, yCoordCenter)])
+printfn "Test 13b: %b" (bob.Color = Color.FromArgb(255,0,0,255))
+printfn "Test 13c: %b" (bob.Name = "Bob")
+
+printfn "\nTests for makeCoordsInverse"
+let d = new PlanetDay((475.0, 475.0, 0.0), (575.0, 575.0, 0.0), (675.0, 675.0, 0.0))
+let e = new PlanetDay((380.0, 380.0, 0.0), (400.0, 400.0, 0.0), (500.0, 500.0, 0.0))
+let f = new PlanetDay((100.0, 100.0, 0.0), (200.0, 200.0, 0.0), (300.0, 300.0, 0.0))
+let de = makeCoordsInverse [d; e; f] (750, 750)
+let ee = makeCoordsInverse [d; e; f] (400, 400)
+let fe = makeCoordsInverse [d; e; f] (0, 0)
+printfn "---------------------------------------------------------------"
+printfn "Test 14a: %A" (de = [(10.0, 10.0); (0.5, 0.5); (-27.5, -27.5)])
+printfn "Test 14b: %A" (ee = [(27.5, 27.5); (18.0, 18.0); (-10.0, -10.0)])
+printfn "Test 14c: %A" (fe = [(47.5, 47.5); (38.0, 38.0); (10.0, 10.0)])
