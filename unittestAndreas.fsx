@@ -135,9 +135,9 @@ printfn "floating point values at gøre. Der er en vis upræcision."
 printfn ""
 
 printfn "Test af SizeVector:"
-printfn "  1. %b" (SizeVector (3.0,3.0,3.0) = 5.19615242270663188058)
-printfn "  1. %b" (SizeVector (0.4,7.3,5.0) = 8.85720046064217742677)
-printfn "  1. %b" (SizeVector (9.1,5.0,9.0) = 13.740815114104403086)
+printfn "  9a. %b" (SizeVector (3.0,3.0,3.0) = 5.19615242270663188058)
+printfn "  9b. %b" (SizeVector (0.4,7.3,5.0) = 8.85720046064217742677)
+printfn "  9c. %b" (SizeVector (9.1,5.0,9.0) = 13.740815114104403086)
 printfn ""
 
 printfn "Test af Acceleration:"
@@ -149,22 +149,22 @@ let r1 = (1.0,1.0,1.0)
 let v1 = (3.0,4.2,5.8)
 let a1 = (8.9,3.2,9.3)
 let p1 = new PlanetDay(r1,v1,a1)
-printfn "  1. %b" (p1.r = r1 && p1.v = v1 && p1.a = a1)
+printfn "  10a. %b" (p1.r = r1 && p1.v = v1 && p1.a = a1)
 
 let r2 = (3.0,2.8,9.3)
 let v2 = (3.2,23.0,29.3)
 let a2 = (3.2,29.1,39.2)
 let p2 = new PlanetDay(r2,v2,a2)
-printfn "  2. %b" (p2.r = r2 && p2.v = v2 && p2.a = a2)
+printfn "  10b. %b" (p2.r = r2 && p2.v = v2 && p2.a = a2)
 
 let r3 = (2.3,29.2,98.2)
 let v3 = (38.2,3928.2,38.3)
 let a3 = (3.0,39.3,22.3)
 let p3 = new PlanetDay(r3,v3,a3)
-printfn "  3. %b" (p3.r = r3 && p3.v = v3 && p3.a = a3)
+printfn "  10c. %b" (p3.r = r3 && p3.v = v3 && p3.a = a3)
 printfn ""
 
-printfn "Test af TimePeriod:"
+printfn "Test af TimePeriod: (Læs kommentar i kildekode)"
 
 let pD1r = (30.0,30.0,30.0)
 let pD1v = (30.0,30.0,30.0)
@@ -180,7 +180,7 @@ let pD2 = new PlanetDay(pD2r, pD2v, pD2a)
 
 let time : PlanetDay list = TimePeriod 2 pD1 2.0
 
-printfn "  1. %b" (pD1.r = time.[0].r && pD2.r = time.[1].r &&
+printfn "  11a. %b" (pD1.r = time.[0].r && pD2.r = time.[1].r &&
                    pD1.v = time.[0].v && pD2.v = time.[1].v &&
                    pD1.a = time.[0].a) // && pD2.a = time.[1].a)
 printfn ""

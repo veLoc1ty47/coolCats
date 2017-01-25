@@ -175,9 +175,9 @@ let ae = makeCoords [a; b; c] (750, 750)
 let be = makeCoords [a; b; c] (400, 400)
 let ce = makeCoords [a; b; c] (0, 0)
 printfn "---------------------------------------------------------------"
-printfn "Test 1a: %b" (ae = [(475.0, 475.0); (575.0, 575.0); (675.0, 675.0)])
-printfn "Test 1b: %b" (be = [(300.0, 300.0); (400.0, 400.0); (500.0, 500.0)])
-printfn "Test 1c: %b" (ce = [(100.0, 100.0); (200.0, 200.0); (300.0, 300.0)])
+printfn "Test 12a: %b" (ae = [(475.0, 475.0); (575.0, 575.0); (675.0, 675.0)])
+printfn "Test 12b: %b" (be = [(300.0, 300.0); (400.0, 400.0); (500.0, 500.0)])
+printfn "Test 12c: %b" (ce = [(100.0, 100.0); (200.0, 200.0); (300.0, 300.0)])
 
 // Vi tester om den omregner rigtigt når Days er sat til 1. At præcist kalkulere hvad outputtet vil
 // være med god float point nøjagtighed er totalt uoverskueligt over flere dage.
@@ -188,9 +188,9 @@ let xCoordCenter = xCoordCart * 10.0 + 375.0
 let yCoordCart = 100.0 * Math.Sin((100.0+90.0) * Math.PI / 180.0) * Math.Sin((100.0) * Math.PI / 180.0)
 let yCoordCenter = yCoordCart * 10.0 + 375.0
 printfn "---------------------------------------------------------------"
-printfn "Test 2a: %b" (bob.Coords = [(xCoordCenter, yCoordCenter)])
-printfn "Test 2b: %b" (bob.Color = Color.FromArgb(255,0,0,255))
-printfn "Test 2c: %b" (bob.Name = "Bob")
+printfn "Test 13a: %b" (bob.Coords = [(xCoordCenter, yCoordCenter)])
+printfn "Test 13b: %b" (bob.Color = Color.FromArgb(255,0,0,255))
+printfn "Test 13c: %b" (bob.Name = "Bob")
 
 printfn "\nTests for makeCoordsInverse"
 let d = new PlanetDay((475.0, 475.0, 0.0), (575.0, 575.0, 0.0), (675.0, 675.0, 0.0))
@@ -200,6 +200,6 @@ let de = makeCoordsInverse [d; e; f] (750, 750)
 let ee = makeCoordsInverse [d; e; f] (400, 400)
 let fe = makeCoordsInverse [d; e; f] (0, 0)
 printfn "---------------------------------------------------------------"
-printfn "Test 3a: %A" (de = [(10.0, 10.0); (0.5, 0.5); (-27.5, -27.5)])
-printfn "Test 3b: %A" (ee = [(27.5, 27.5); (18.0, 18.0); (-10.0, -10.0)])
-printfn "Test 3c: %A" (fe = [(47.5, 47.5); (38.0, 38.0); (10.0, 10.0)])
+printfn "Test 14a: %A" (de = [(10.0, 10.0); (0.5, 0.5); (-27.5, -27.5)])
+printfn "Test 14b: %A" (ee = [(27.5, 27.5); (18.0, 18.0); (-10.0, -10.0)])
+printfn "Test 14c: %A" (fe = [(47.5, 47.5); (38.0, 38.0); (10.0, 10.0)])
