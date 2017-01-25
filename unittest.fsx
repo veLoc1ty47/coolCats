@@ -4,9 +4,6 @@ open System.Drawing
 let Add2DVectors v1 v2 =
     (fst v1 + fst v2, snd v1 + snd v2)
 
-let Subtract2DVectors v1 v2 =
-    (fst v1 - fst v2, snd v1 - snd v2)
-
 let fst3 = function
     | (a,_,_) -> a
 
