@@ -1,5 +1,4 @@
 open System
-open System.Windows.Forms
 open System.Drawing
 
 let Add2DVectors v1 v2 =
