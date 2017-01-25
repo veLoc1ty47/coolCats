@@ -180,7 +180,7 @@ printfn "Test 1b: %b" (be = [(300.0, 300.0); (400.0, 400.0); (500.0, 500.0)])
 printfn "Test 1c: %b" (ce = [(100.0, 100.0); (200.0, 200.0); (300.0, 300.0)])
 
 // Vi tester om den omregner rigtigt når Days er sat til 1. At præcist kalkulere hvad outputtet vil
-// være med god float point nøjagtighed er totalt uoverskueligt.
+// være med god float point nøjagtighed er totalt uoverskueligt over flere dage.
 printfn "\nTests for Planet"
 let bob = new Planet((100.0, 100.0, 100.0), (200.0, 200.0, 200.0), 1, 1.0, (750, 750), Color.FromArgb(255,0,0,255), "Bob")
 let xCoordCart = 100.0 * Math.Sin((100.0+90.0) * Math.PI / 180.0) * Math.Cos((100.0) * Math.PI / 180.0)
